@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI Bio Generator</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .main-container {
+      max-width: 800px;
+      margin: 3rem auto;
+      text-align: center;
+      padding: 2rem;
+      background: #f4f8ff;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    input {
+      padding: 0.7rem;
+      width: 70%;
+      font-size: 1rem;
+      margin-top: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin: 1rem 0.5rem;
+      padding: 0.7rem 1.5rem;
+      background-color: #003366;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #result {
+      margin-top: 2rem;
+      text-align: left;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="logo">Famous Personalities Of Bharat</div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="bios.html">Biographies</a></li>
+        <li><a href="ai-bios.html">AI Bio Generator</a></li>
+        <li><a href="indiamap.html">India Map</a></li>
+        <li><a href="quiz.html">AI Quiz</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="main-container">
+    <h2>🧠 AI-Generated Biography</h2>
+    <input type="text" id="nameInput" placeholder="Enter a famous Indian name" />
+    <br>
+    <button onclick="generateBio()">Generate Bio</button>
+    <button onclick="startVoice()">🎤 Speak</button>
+    <div id="result"></div>
+    <button onclick="saveBio()" id="saveBtn" style="display: none;">💾 Save Bio</button>
+  </div>
+
+  <script>
+    let currentName = "", currentBio = "";
+
+    async function generateBio() {
+      const name = document.getElementById("nameInput").value.trim();
+      const resultDiv = document.getElementById("result");
+      document.getElementById("saveBtn").style.display = "none";
+      if (!name) return alert("Please enter a name.");
+      currentName = name;
+      resultDiv.innerHTML = "⏳ Generating bio...";
+
+      try {
+        const res = await fetch("http://localhost:4000/generate-bio", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name })
+        });
+        const data = await res.json();
+        currentBio = data.bio;
+        resultDiv.innerHTML = `<h3>${name}</h3><p>${data.bio}</p>`;
+        document.getElementById("saveBtn").style.display = "inline-block";
+      } catch {
+        resultDiv.innerHTML = "⚠️ Failed to generate bio.";
+      }
+    }
+
+    async function saveBio() {
+      const res = await fetch("http://localhost:4000/save-bio", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: currentName, bio: currentBio })
+      });
+      const data = await res.json();
+      alert(data.message || "✅ Bio saved.");
+    }
+
+    function startVoice() {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = 'en-IN';
+      recognition.start();
+      recognition.onresult = function(e) {
+        document.getElementById("nameInput").value = e.results[0][0].transcript;
+        generateBio();
+      };
+    }
+  </script>
+</body>
+</html>

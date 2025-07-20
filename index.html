@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Legends of Bharat</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="logo">Famous Personalities Of Bharat</div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="bios.html">Biographies</a></li>
+        <li><a href="ai-bios.html">AI Bio Generator</a></li>
+        <li><a href="indiamap.html">India Map</a></li>
+        <li><a href="quiz.html">AI Quiz</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Discover the Great Personalities of Bharat</h1>
+      <p>From ancient philosophers to modern-day heroes, their contributions shape our heritage and identity.</p>
+      <a href="bios.html" class="btn">Explore Biographies</a>
+    </div>
+    
+
+  </section>
+  
+
+  <section class="about">
+    <h2>Why Are These Personalities Important?</h2>
+    <p>Each individual profiled here represents a pillar of Indian culture, science, politics, or philosophy. Their stories are more than history — they’re a living inspiration for the nation’s future. Honoring them preserves our rich legacy and educates the next generation.</p>
+  </section>
+  <div id="chatbot-container">
+  <button id="chat-toggle">💬</button>
+  <div id="chatbox" class="hidden">
+    <div id="chat-header">AI-GPT</div>
+    <div id="chat-messages"></div>
+    <div id="chat-input-area">
+      <input type="text" id="chat-input" placeholder="Ask about any personality..." />
+      <button id="send-btn">➤</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  #chatbot-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 999;
+  }
+
+  #chat-toggle {
+    background: #003366;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  }
+
+  #chatbox {
+    width: 300px;
+    height: 400px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.25);
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    bottom: 60px;
+    right: 0;
+  }
+
+  #chatbox.hidden {
+    display: none;
+  }
+
+  #chat-header {
+    background: #003366;
+    color: white;
+    padding: 10px;
+    font-weight: bold;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    text-align: center;
+  }
+
+  #chat-messages {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    font-size: 0.95rem;
+  }
+
+  #chat-input-area {
+    display: flex;
+    border-top: 1px solid #ccc;
+  }
+
+  #chat-input {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    font-size: 1rem;
+    outline: none;
+  }
+
+  #send-btn {
+    background: #003366;
+    color: white;
+    border: none;
+    padding: 0 16px;
+    cursor: pointer;
+  }
+</style>
+
+  <footer>
+    <p>&copy; 2025 Legends of Bharat | Designed with ❤️ to honor Indian icons</p>
+  </footer>
+<script src="assistant.js"></script>  
+</body>
+</html>

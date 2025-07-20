@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Static India Map (States & Famous Personalities)</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/geodata/indiaLow.js"></script>
+  <!-- UNCOMMENT if you have the paid districts file:
+  <script src="https://cdn.amcharts.com/lib/5/geodata/indiaDistrictsLow.js"></script>
+  -->
+  <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+  <style>
+    html, body { height: 100%; margin: 0; }
+    #chartdiv {
+      width: 100vw;
+      height: 85vh;
+      background: #f6faff;
+    }
+    .amcharts-popup {
+      font-family: inherit;
+      font-size: 1rem;
+      padding: 1em;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      border: 1px solid #b5d0ff;
+      max-width: 320px;
+      position: fixed;
+      z-index: 9999;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="logo">Famous Personalities Of Bharat</div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="bios.html">Biographies</a></li>
+        <li><a href="ai-bios.html">AI Bio Generator</a></li>
+        <li><a href="indiamap.html">India Map</a></li>
+        <li><a href="quiz.html">AI Quiz</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+  <div id="chartdiv"></div>
+  <script>
+    // Famous personalities by state code
+    const stateFamous = {
+      "IN-AP": ["N. T. Rama Rao", "Pingali Venkayya", "C. N. R. Rao"],
+      "IN-TN": ["A. P. J. Abdul Kalam", "C. V. Raman", "M. S. Subbulakshmi"],
+      "IN-DL": ["Virat Kohli", "Arvind Kejriwal", "Manmohan Singh"],
+      "IN-MH": ["Sachin Tendulkar", "Dr. B. R. Ambedkar", "Lata Mangeshkar"],
+      "IN-GJ": ["Mahatma Gandhi", "Sardar Patel", "Morarji Desai"],
+      "IN-KA": ["C. N. R. Rao", "Rahul Dravid", "Sir M Visvesvaraya"],
+      "IN-WB": ["Rabindranath Tagore", "Subhas Chandra Bose", "Sourav Ganguly"],
+      "IN-UP": ["Amitabh Bachchan", "Atal Bihari Vajpayee", "Ram Manohar Lohia"],
+      "IN-RJ": ["Maharana Pratap", "Ila Arun", "Bhagwan Das"],
+      // Add more if you want
+    };
+
+    am5.ready(function() {
+      var root = am5.Root.new("chartdiv");
+      root.setThemes([am5themes_Animated.new(root)]);
+
+      // Static, flat India map (no rotation, just zoom/pan)
+      var chart = root.container.children.push(
+        am5map.MapChart.new(root, {
+          panX: "translateX",
+          panY: "translateY",
+          projection: am5map.geoMercator(),
+          wheelY: "zoom",
+          pinchZoom: true,
+        })
+      );
+
+      // Add zoom control
+      chart.set("zoomControl", am5map.ZoomControl.new(root, {}));
+
+      // States layer
+      var polygonSeries = chart.series.push(
+        am5map.MapPolygonSeries.new(root, {
+          geoJSON: am5geodata_indiaLow,
+          valueField: "value",
+          calculateAggregates: true
+        })
+      );
+
+      polygonSeries.mapPolygons.template.setAll({
+        tooltipText: "{name}",
+        interactive: true,
+        fill: am5.color(0x64b5f6),
+        stroke: am5.color(0xffffff),
+        strokeWidth: 2,
+        hoverFill: am5.color(0xffb74d)
+      });
+
+      // Color states
+      polygonSeries.mapPolygons.template.adapters.add("fill", function(fill, target) {
+        if (target.dataItem) {
+          let code = target.dataItem.dataContext.id;
+          let palette = [
+            0x64b5f6, 0x4fc3f7, 0x81c784, 0xffb74d, 0xba68c8,
+            0xe57373, 0xfdc06f, 0x81d4fa, 0xff8a65, 0xa1887f
+          ];
+          let idx = code ? code.split("").reduce((a,c)=>a+c.charCodeAt(0),0) % palette.length : 0;
+          return am5.color(palette[idx]);
+        }
+        return fill;
+      });
+
+      // Remove popup when clicking anywhere else
+      chart.root.dom.addEventListener("mousedown", function(e) {
+        if (!e.target.className || !e.target.className.toString().includes('amcharts-popup')) {
+          document.querySelectorAll('.amcharts-popup').forEach(e=>e.remove());
+        }
+      });
+
+      // Show famous personalities in popup on click
+      polygonSeries.mapPolygons.template.events.on("click", function(ev) {
+        document.querySelectorAll('.amcharts-popup').forEach(e=>e.remove());
+        let stateCode = ev.target.dataItem.dataContext.id;
+        let stateName = ev.target.dataItem.dataContext.name;
+        let people = stateFamous[stateCode] || ["No data"];
+        let html = `<strong>${stateName}</strong><br>
+          <span>Famous Personalities:</span>
+          <ul style="padding-left:1.2em;margin:0;">${people.map(p=>`<li>${p}</li>`).join("")}</ul>
+          <div style="color:#888;font-size:90%;margin-top:0.2em;">Click popup to close</div>`;
+        let popup = document.createElement('div');
+        popup.className = 'amcharts-popup';
+        popup.innerHTML = html;
+        document.body.appendChild(popup);
+
+        // Mouse position fallback
+        let x = 300, y = 300;
+        if (ev.originalEvent && typeof ev.originalEvent.clientX === "number") {
+          x = ev.originalEvent.clientX;
+          y = ev.originalEvent.clientY;
+        }
+        let popupWidth = 320, popupHeight = 180;
+        let posX = Math.min(x + 10, window.innerWidth - popupWidth - 10);
+        let posY = Math.min(y - 20, window.innerHeight - popupHeight - 10);
+        popup.style.left = posX + "px";
+        popup.style.top = Math.max(posY, 70) + "px";
+        popup.onclick = () => popup.remove();
+      });
+
+      // --- DISTRICTS LAYER (if available) ---
+      // Uncomment below if you have indiaDistrictsLow.js and want districts visible after zoom level 6+
+      /*
+      var districtSeries = chart.series.push(
+        am5map.MapPolygonSeries.new(root, {
+          geoJSON: am5geodata_indiaDistrictsLow,
+          visible: false
+        })
+      );
+      chart.on("zoomLevel", function(ev) {
+        if (chart.get("zoomLevel") > 6) {
+          districtSeries.set("visible", true);
+        } else {
+          districtSeries.set("visible", false);
+        }
+      });
+      districtSeries.mapPolygons.template.setAll({
+        tooltipText: "{name} District",
+        fill: am5.color(0xbbbfd0),
+        stroke: am5.color(0xffffff),
+        strokeWidth: 1
+      });
+      */
+    });
+  </script>
+</body>
+</html>

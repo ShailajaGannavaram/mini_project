@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI Biography Search</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .search-container {
+      max-width: 800px;
+      margin: 3rem auto;
+      padding: 2rem;
+      background: #f4f8ff;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    input, select, button {
+      padding: 0.7rem;
+      margin: 0.5rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    .bio-card {
+      background: white;
+      text-align: left;
+      margin: 1rem 0;
+      padding: 1rem;
+      border-left: 5px solid #003366;
+      border-radius: 6px;
+    }
+    button {
+      background-color: #003366;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="logo">Famous Personalities Of Bharat</div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="bios.html">Biographies</a></li>
+        <li><a href="ai-bios.html">AI Bio Generator</a></li>
+        <li><a href="indiamap.html">India Map</a></li>
+        <li><a href="quiz.html">AI Quiz</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="search-container">
+    <h2>🔍 Search Famous Indian Personalities</h2>
+    <input type="text" id="searchInput" placeholder="Search by name, keyword, or role" />
+    <select id="categoryFilter">
+      <option value="">All Categories</option>
+      <option value="scientist">Scientist</option>
+      <option value="freedom fighter">Freedom Fighter</option>
+      <option value="artist">Artist</option>
+      <option value="sportsperson">Sportsperson</option>
+      <option value="politician">Politician</option>
+    </select>
+    <select id="regionFilter">
+      <option value="">All Regions</option>
+      <option value="Tamil Nadu">Tamil Nadu</option>
+      <option value="Maharashtra">Maharashtra</option>
+      <option value="Uttar Pradesh">Uttar Pradesh</option>
+      <option value="Punjab">Punjab</option>
+      <option value="Gujarat">Gujarat</option>
+    </select>
+    <select id="voiceLang">
+      <option value="en-IN">🎙 English</option>
+      <option value="hi-IN">🎙 Hindi</option>
+      <option value="te-IN">🎙 Telugu</option>
+    </select>
+    <br>
+    <button onclick="semanticSearch()">Search</button>
+    <button onclick="startVoice()">🎤 Speak</button>
+    <div id="results" style="margin-top: 2rem;"></div>
+  </div>
+
+  <script src="bios.js"></script>
+</body>
+</html>
